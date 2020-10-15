@@ -2,3 +2,4 @@ paddlepaddle-gpu==1.8.4.post107
 paddle-serving-client
 paddle-serving-server-gpu
 paddle-serving-app
+soundfile
