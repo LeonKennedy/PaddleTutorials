@@ -24,6 +24,16 @@ def j():
         print(init_h.shape)
 
 
+def show():
+    data = fluid.layers.fill_constant(shape=[3, 4], value=16, dtype='int64')
+    data = fluid.layers.Print(data, message="Print data:")
+
+    place = fluid.CPUPlace()
+    exe = fluid.Executor(place)
+    exe.run(fluid.default_startup_program())
+
+    ret = exe.run()
+
 def slice():
     input = fluid.layers.data(
         name="input", shape=[3, 4, 5, 6], dtype='float32')
@@ -57,14 +67,27 @@ def lstm():
     init_h = fluid.layers.fill_constant([num_layers, batch_size, hidden_size], 'float32', 0.0)
     init_c = fluid.layers.fill_constant([num_layers, batch_size, hidden_size], 'float32', 0.0)
 
-    print(emb.shape)
+    print(emb.shape) # (-1, 100, 256)
     rnn_out, last_h, last_c = fluid.layers.lstm(emb, init_h, init_c, max_len, hidden_size, num_layers,
                                                 dropout_prob=dropout_prob)
     print(rnn_out.shape)  # (-1, 100, 150)
     print(last_h.shape)  # (1, 20, 150)
     print(last_c.shape)  # (1, 20, 150)
 
+    dict_dim, emb_dim, hidden_dim = 128, 64, 512
+    data = fluid.data(name='step_data', shape=[None], dtype='int64')
+    x = fluid.embedding(input=data, size=[dict_dim, emb_dim])
+    pre_hidden = fluid.data(
+        name='pre_hidden', shape=[None, hidden_dim], dtype='float32')
+    pre_cell = fluid.data(
+        name='pre_cell', shape=[None, hidden_dim], dtype='float32')
+    hidden = fluid.layers.lstm_unit(
+        x_t=x,
+        hidden_t_prev=pre_hidden,
+        cell_t_prev=pre_cell)
+
 
 if __name__ == '__main__':
     # slice()
-    lstm()
+    # lstm()
+    show()

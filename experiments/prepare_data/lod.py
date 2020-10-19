@@ -28,6 +28,27 @@ def sample():
                                 place=fluid.CPUPlace())
 
     # 查看lod-tensor嵌套层数
+    print(a)
+    print(a.recursive_sequence_lengths())
+    print("The LoD of the result: {}.".format(a.lod()))
+
+    n_2 = np.random.rand(15).astype('float32')
+    a = fluid.create_lod_tensor(data=n_2,
+                                recursive_seq_lens=[[3, 1, 2], [3, 2, 4, 1, 2, 3]],
+                                place=fluid.CPUPlace())
+
+    # 查看lod-tensor嵌套层数
+    print(a)
+    print(a.recursive_sequence_lengths())
+    print("The LoD of the result: {}.".format(a.lod()))
+
+    n_2 = np.random.rand(15, 3).astype('float32')
+    a = fluid.create_lod_tensor(data=n_2,
+                                recursive_seq_lens=[[3, 1, 2], [3, 2, 4, 1, 2, 3]],
+                                place=fluid.CPUPlace())
+
+    # 查看lod-tensor嵌套层数
+    print(a)
     print(a.recursive_sequence_lengths())
     print("The LoD of the result: {}.".format(a.lod()))
 
@@ -78,34 +99,6 @@ def create():
     print("The array : {}.".format(np.array(lod_tensor)))
 
 
-def fluid_data():
-    # Creates a variable with fixed size [3, 2, 1]
-    # User can only feed data of the same shape to x
-    x = fluid.data(name='x', shape=[3, 2, 1], dtype='float32')
-
-    # Creates a variable with changable batch size -1.
-    # Users can feed data of any batch size into y,
-    # but size of each data sample has to be [2, 1]
-    y = fluid.data(name='y', shape=[-1, 2, 1], dtype='float32')
-
-    z = x + y
-
-    # In this example, we will feed x and y with np-ndarry "1"
-    # and fetch z, like implementing "1 + 1 = 2" in PaddlePaddle
-    feed_data = np.ones(shape=[3, 2, 1], dtype=np.float32)
-
-    exe = fluid.Executor(fluid.CPUPlace())
-    out = exe.run(fluid.default_main_program(),
-                  feed={
-                      'x': feed_data,
-                      'y': feed_data
-                  },
-                  fetch_list=[z.name])
-
-    # np-ndarray of shape=[3, 2, 1], dtype=float32, whose elements are 2
-    print(out)
-
-
 def exp_sequence_expand():
     # x = fluid.data(name='x', shape=[1], dtype='float32')
     # y = fluid.data(name='y', shape=[1], dtype='float32', lod_level=1)
@@ -115,8 +108,8 @@ def exp_sequence_expand():
     y = fluid.data(name='y', shape=[8, 1], dtype='float32', lod_level=1)
     out = layers.sequence_expand(x=x, y=y, ref_level=0)
 
-    exe = fluid.Executor(fluid.CPUPlace())
     place = fluid.CPUPlace()
+    exe = fluid.Executor(place)
 
     np_data = np.array([[1], [2], [3], [4]]).astype('float32')
     x_lod_tensor = fluid.create_lod_tensor(np_data, [[2, 2]], place)
@@ -124,7 +117,9 @@ def exp_sequence_expand():
 
     y_lod_tensor = fluid.create_random_int_lodtensor([[2, 2], [3, 3, 1, 1]], [1],
                                                      place, low=0, high=1)
+    y_lod_tensor2 = fluid.create_random_int_lodtensor([[2, 2], [3, 3, 1, 1]], [9, 16], place, low=0, high=1)
     print(y_lod_tensor)
+    print(y_lod_tensor2)
     # lod: [[0, 2, 4][0, 3, 6, 7, 8]]
     #    dim: 8, 1
     #    layout: NCHW
@@ -138,5 +133,6 @@ def exp_sequence_expand():
 
 
 if __name__ == '__main__':
-    # fluid_data()
-    exp_sequence_expand()
+    # sample()
+    create()
+    # exp_sequence_expand()

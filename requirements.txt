@@ -3,3 +3,4 @@ paddle-serving-client
 paddle-serving-server-gpu
 paddle-serving-app
 soundfile
+python_speech_features
