@@ -9,7 +9,6 @@
 @desc:
 """
 
-import paddle
 import paddle.fluid as fluid
 from paddle.fluid.dygraph import Linear
 import paddle.fluid.dygraph as dygraph
@@ -22,11 +21,10 @@ def preprocess(ratio=0.8):
                      'RAD', 'TAX', 'PTRATIO', 'B', 'LSTAT', 'MEDV']
     feature_num = len(feature_names)
     data = data.reshape([data.shape[0] // feature_num, feature_num])
-    print(f"data shape: {data.shape}")
     # split train and test
     data = normalize(data)
-
     offset = int(data.shape[0] * ratio)
+    print(f"train: {offset}, test {data.shape[0] -  offset}")
     return data[:offset], data[offset:]
 
 
