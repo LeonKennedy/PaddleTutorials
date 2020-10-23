@@ -153,13 +153,6 @@ class SkipGram(fluid.dygraph.Layer):
                 initializer=fluid.initializer.UniformInitializer(
                     low=-0.5 / embedding_size, high=0.5 / embedding_size)))
 
-        # 使用paddle.fluid.dygraph提供的Embedding函数，构造另外一个词向量参数
-        # 这个参数的大小为：[self.vocab_size, self.embedding_size]
-        # 数据类型为：float32
-        # 这个参数的名称为：embedding_para_out
-        # 这个参数的初始化方式为在[-init_scale, init_scale]区间进行均匀采样
-        # 跟上面不同的是，这个参数的名称跟上面不同，因此，
-        # embedding_para_out和embedding_para虽然有相同的shape，但是权重不共享
         self.embedding_out = Embedding(
             size=[self.vocab_size, self.embedding_size],
             dtype='float32',
